@@ -58,6 +58,7 @@ export function ModificarRegistro(index, registroActualizado) {
   return DATA;
 }
 
+//funcion para generar ids
 export function GenerateIds() {
   const abc = "abcdefghijklmnopqrstuvwxyz";
   const numbers = "0123456789";
@@ -70,12 +71,12 @@ export function GenerateIds() {
   for (const num of numbers) {
     ids.push(num);
   }
-
   const randomIndex = ids.sort(() => Math.random() - 0.5);
   const randomId = randomIndex.slice(0, 50).join("");
 
   return randomId;
 }
+
 //function para exportar la data en un archivo xlsx
 export function DanwloadsXLSX(data) {
   if (data.length === 0) {
@@ -88,13 +89,14 @@ export function DanwloadsXLSX(data) {
   XLSX.writeFile(book, "informacion_actual.xlsx");
 }
 
-export function RemoveRegister(index, registroActualizado) {
-  // const a = DATA[index - 1];
-  const a = DATA.splice(index - 1, 1);
-  DATA = DATA.map((item, itemIndex) =>
-    itemIndex === index ? { ...item, ...registroActualizado } : item,
-  );
+//funcion para borrar registro
+export function RemoveRegister(index) {
+  if (index < 0 || index >= DATA.length) {
+    return DATA;
+  }
 
-  console.log(a);
-  // localStorage.removeItem(STORAGE_KEY, JSON.stringify(DATA.splice(index, 1)));
+  DATA = DATA.filter((_, itemIndex) => itemIndex !== index);
+  guardarData();
+
+  return DATA;
 }

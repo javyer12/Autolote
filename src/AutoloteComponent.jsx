@@ -35,41 +35,21 @@ export function AutoloteComponent() {
   const [numRegister, setNumRegister] = useState(0); //
   const [selectedIndex, setSelectedIndex] = useState(null);
   //guarda los valores de la data en variables para poder mostrarlas en los inputs
-  const formData = selectedIndex !== null ? data[selectedIndex] : {};
+  const formData = selectedIndex !== null ? (data[selectedIndex] ?? {}) : {};
   const [dataForDownload, setDataForDownload] = useState({
     data: selectedIndex !== null ? data[selectedIndex] : data,
   }); //controla el estado de la data que esta renderizada en la tabla en el momento que se ejecuta una descarga
-  // //
-  // const [msg, setMessage] = useState(""); //variable para controlar los mensajes exitoso/fallo
-  // const currentRegister = data[infoRegister];
-
-  // const removeRegister = (indexToRemove) => {
-  //   //muestra el mensaje de exito
-  //   setMessage("Eliminado correctamente");
-  //   setTimeout(() => setMessage(""), 3000);
-
-  //   const newData = data.filter((_, index) => index !== indexToRemove);
-  //   setData(newData);
-
-  //   //valida que exista al menos un item
-  //   if (newData.length === 0) {
-  //     setInfoRegister(0);
-  //   } else if (indexToRemove >= newData.length) {
-  //     setInfoRegister(newData.length - 1);
-  //   } else {
-  //     setInfoRegister(indexToRemove);
-  //   }
-  // };
-
+  console.log(data[data.length + 1]);
+  console.log(formData);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (selectedIndex === null) return;
 
     setData((prevData) => {
-      setDataForDownload(prevData);
       const updatedData = prevData.map((item, index) =>
         index === selectedIndex ? { ...item, [name]: value } : item,
       );
+      setDataForDownload({ data: updatedData });
 
       ModificarRegistro(selectedIndex, updatedData[selectedIndex]);
 
@@ -82,6 +62,36 @@ export function AutoloteComponent() {
     console.log(formData);
   };
 
+  const handleDeleteRegister = () => {
+    if (selectedIndex === null || !data[selectedIndex]) {
+      alert("Seleccione un registro para eliminar");
+      return;
+    }
+
+    const currentRegister = data[selectedIndex];
+    const confirmRemove = confirm(
+      "Seguro que quiere eliminar el Registro con codigo de Registro " +
+        currentRegister.CodAuto,
+    );
+
+    if (!confirmRemove) return;
+
+    const updatedData = RemoveRegister(selectedIndex);
+    const nextIndex =
+      updatedData.length === 0
+        ? null
+        : Math.min(selectedIndex, updatedData.length - 1);
+
+    setData(updatedData);
+    setDataForDownload({ data: updatedData });
+    setSelectedIndex(nextIndex);
+    setInfoRegister(nextIndex === null ? 0 : nextIndex + 1);
+    setNumRegister(2);
+    setLoadedData(true);
+
+    alert("Registro Eliminado");
+  };
+
   const selectRegister = (index, registerType) => {
     setInfoRegister(index + 1);
     setNumRegister(registerType);
@@ -89,17 +99,6 @@ export function AutoloteComponent() {
     setLoadedData(true);
   };
 
-  // const handleDeleteRegister = () => {
-  //   let index = dataForDownload.data[infoRegister - 1].CodAuto;
-  //   let confirmRemove = confirm(
-  //     "Seguro que quiere eliminar el Registro con codigo de Registro " + index,
-  //   );
-  //   if (confirmRemove) {
-  //     console.log(index);
-  //     RemoveRegister(index);
-  //   }
-  //   alert("Registro Eliminado");
-  // };
   return (
     <div className="m-2 w-full">
       {/* Inputs component*/}
@@ -183,12 +182,6 @@ export function AutoloteComponent() {
               onChange={handleInputChange}
             />
           </div>
-          {/* <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md mt-8 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-          >
-            Submit
-          </button> */}
         </form>
       </div>
       {/* Table component*/}
@@ -212,7 +205,7 @@ export function AutoloteComponent() {
           onClick={() => {
             setInfoRegister(0);
             setNumRegister(0);
-            setSelectedIndex(0);
+            setSelectedIndex(data.length > 0 ? 0 : null);
             setLoadedData(true);
           }}
           classStyles={styles}
@@ -284,7 +277,7 @@ export function AutoloteComponent() {
 
         <DeleteRegisterButton
           classStyles={styles}
-          onClick={() => RemoveRegister(infoRegister)}
+          onClick={handleDeleteRegister}
         >
           Eliminar
         </DeleteRegisterButton>
@@ -295,7 +288,10 @@ export function AutoloteComponent() {
           Leer
         </ReadRegisterButton>
         <CleanRegisterButton
-          onClick={() => console.log("clean register")}
+          onClick={() => {
+            setLoadedData(false);
+            setSelectedIndex(null);
+          }}
           classStyles={styles}
         >
           Limpiar
