@@ -12,7 +12,9 @@ export function UploadFile() {
 
     reader.readAsArrayBuffer(file);
     reader.onload = (e) => {
+      console.log(e);
       const binaryDatya = e.target.result;
+
       const workSpace = XLSX.read(binaryDatya, { type: "buffer" });
       const nameFisrtSheet = workSpace.SheetNames[0];
       const currentSheet = workSpace.Sheets(nameFisrtSheet);

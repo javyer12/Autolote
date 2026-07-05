@@ -48,11 +48,41 @@ export function VerRegistro() {
   return DATA;
 }
 
+export function CargarRegistros() {
+  if (DATA.length === 0) {
+    DATA = [...mockData];
+    guardarData();
+  }
+
+  return DATA;
+}
+
 export function ModificarRegistro(index, registroActualizado) {
   DATA = DATA.map((item, itemIndex) =>
     itemIndex === index ? { ...item, ...registroActualizado } : item,
   );
 
+  guardarData();
+
+  return DATA;
+}
+
+export function AgregarRegistro(registroNuevo, registros = DATA) {
+  DATA = [...registros, registroNuevo];
+  guardarData();
+
+  return DATA;
+}
+
+export function ReemplazarRegistros(registros) {
+  DATA = registros;
+  guardarData();
+
+  return DATA;
+}
+
+export function LimpiarRegistros() {
+  DATA = [];
   guardarData();
 
   return DATA;
@@ -90,12 +120,12 @@ export function DanwloadsXLSX(data) {
 }
 
 //funcion para borrar registro
-export function RemoveRegister(index) {
-  if (index < 0 || index >= DATA.length) {
+export function RemoveRegister(index, registros = DATA) {
+  if (index < 0 || index >= registros.length) {
     return DATA;
   }
 
-  DATA = DATA.filter((_, itemIndex) => itemIndex !== index);
+  DATA = registros.filter((_, itemIndex) => itemIndex !== index);
   guardarData();
 
   return DATA;
