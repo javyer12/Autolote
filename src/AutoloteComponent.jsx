@@ -67,7 +67,8 @@ export function AutoloteComponent() {
   };
   const [newRegister, setNewRegister] = useState(emptyRegister); //vacia los inputs para agregar un registro nuevo
 
-  const [isSorted, setIsSorted] = useState(false);
+  const [isSorted, setIsSorted] = useState(false);//controla la variable de estado del modal de ordenamiento
+  console.log(isSorted)
   //guarda los valores de la data en variables para poder mostrarlas en los inputs
   const formData = isAddingRegister
     ? newRegister
@@ -373,7 +374,9 @@ export function AutoloteComponent() {
             <button onClick={() => setUploadFileAble()}>cancel</button>
           </div>
         )}
-        {isSorted && <SortModal />}
+        {isLoaded && isSorted && (
+          <SortModal setIsSorted={setIsSorted} />
+        )}
       </div>
       {/* Table component*/}
       <div className="mt-8 w-full">
