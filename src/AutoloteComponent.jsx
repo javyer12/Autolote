@@ -8,6 +8,8 @@ import {
   ReemplazarRegistros,
   CargarRegistros,
   AgregarRegistro,
+  OrdenarPorCodAuto,
+  OrdenarPorPlaca,
 } from "./classes/Functions";
 import {
   SaveButton,
@@ -30,7 +32,7 @@ import TableRegisters from "./Components/Table";
 import DraggableItemApp from "./Components/DragDropInput";
 import * as XLSX from "xlsx";
 // import { mockData } from "./classes/MockData";
-import { SortModal } from "./Components/SortModal";
+import { SortModal, AscOrDesc } from "./Components/SortModal";
 const tableColumns = [
   "CodAuto",
   "Placa",
@@ -67,8 +69,10 @@ export function AutoloteComponent() {
   };
   const [newRegister, setNewRegister] = useState(emptyRegister); //vacia los inputs para agregar un registro nuevo
 
-  const [isSorted, setIsSorted] = useState(false);//controla la variable de estado del modal de ordenamiento
-  console.log(isSorted)
+  const [isSorted, setIsSorted] = useState(false); //controla la variable de estado del modal de ordenamiento
+  const [sortAtt, setSortAtt] = useState(false);
+  const [sortAttribute, setSortAttribute] = useState("");
+
   //guarda los valores de la data en variables para poder mostrarlas en los inputs
   const formData = isAddingRegister
     ? newRegister
@@ -79,6 +83,54 @@ export function AutoloteComponent() {
     data: selectedIndex !== null ? data[selectedIndex] : data,
   }); //controla el estado de la data que esta renderizada en la tabla en el momento que se ejecuta una descarga
 
+  // ========================Componente Modal====================
+  const recibirDatos = (datosHijo) => {
+    // Object.entries(emptyRegister).forEach(([clave, valor]) => {
+    //   if (datosHijo.attribute !== clave) {
+    //     alert("Por ahora solo está disponible el ordenamiento por CodAuto.");
+    //     return;
+    //   }
+    //   console.log(`${clave}: ${valor}`);
+    // });
+
+    if (datosHijo.type === "attribute") {
+      setSortAttribute(datosHijo.attribute);
+      setSortAtt(true);
+      return;
+    }
+
+    if (datosHijo.type === "direction" && sortAttribute === "CodAuto") {
+      const sortedData = OrdenarPorCodAuto(datosHijo.direction, data);
+
+      setData(sortedData);
+      setDataForDownload({ data: sortedData });
+      setInfoRegister(0);
+      setNumRegister(0);
+      setSelectedIndex(sortedData.length > 0 ? 0 : null);
+      setLoadedData(true);
+      setSortAttribute("");
+    }
+  };
+
+  const recibirDatosPlaca = (datosHijo) => {
+    //==================placa===================
+    if (datosHijo.type === "attribute") {
+      setSortAttribute(datosHijo.attribute);
+      setSortAtt(true);
+      return;
+    }
+    if (datosHijo.type === "direction" && sortAttribute === "Placa") {
+      const sortedData = OrdenarPorPlaca(datosHijo.direction, data);
+      setData(sortedData);
+      setDataForDownload({ sortedData });
+      setInfoRegister(0);
+      setNumRegister(0);
+      setSelectedIndex(sortedData.length > 0 ? 0 : null);
+      setLoadedData(true);
+      setSortAttribute("");
+    }
+  };
+  // ========================Inputs=============================
   //funcion que controla los valores de los inputs
   const handleInputChange = (e) => {
     e?.preventDefault();
@@ -222,14 +274,6 @@ export function AutoloteComponent() {
     const file = event.target.files?.[0];
 
     if (!file) return;
-
-    // if (isLoaded === false) {
-    //   alert(
-    //     "La tabla debe estar vacía antes de leer un archivo. Presione Limpiar primero.",
-    //   );
-    //   event.target.value = "";
-    //   return;
-    // }
 
     const reader = new FileReader();
 
@@ -375,7 +419,18 @@ export function AutoloteComponent() {
           </div>
         )}
         {isLoaded && isSorted && (
-          <SortModal setIsSorted={setIsSorted} />
+          <SortModal
+            enviarDatosPlaca={recibirDatosPlaca}
+            enviarDatos={recibirDatos}
+            setIsSorted={setIsSorted}
+          />
+        )}
+        {sortAtt && (
+          <AscOrDesc
+            enviarDatosPlaca={recibirDatosPlaca}
+            enviarDatos={recibirDatos}
+            setOpenModal={setSortAtt}
+          />
         )}
       </div>
       {/* Table component*/}

@@ -130,3 +130,45 @@ export function RemoveRegister(index, registros = DATA) {
 
   return DATA;
 }
+
+export function OrdenarPorCodAuto(direccion, registros = DATA) {
+  const orden = Number(direccion);
+
+  if (orden !== 1 && orden !== 2) {
+    return registros;
+  }
+
+  DATA = [...registros].sort((registroA, registroB) => {
+    const codAutoA = Number(registroA.CodAuto);
+    const codAutoB = Number(registroB.CodAuto);
+
+    if (!Number.isFinite(codAutoA) || !Number.isFinite(codAutoB)) {
+      return String(registroA.CodAuto).localeCompare(String(registroB.CodAuto));
+    }
+
+    return orden === 1 ? codAutoA - codAutoB : codAutoB - codAutoA;
+  });
+
+  guardarData();
+
+  return DATA;
+}
+
+export function OrdenarPorPlaca(direccion, registros = DATA) {
+  const orden = Number(direccion);
+  // if (orden !== 1 && orden !== 2) {
+  //   return registros;
+  // }
+  DATA = [...registros].sort((registroA, registroB) => {
+    // const placaA = Number(registroA.Placa);
+    // const placaB = Number(registroB.Placa);
+  const placaA = registroA.Placa;
+  const placaB = registroB.Placa;
+    // if (!Number.isFinite(placaA) || !Number.isFinite(placaB)) {
+    //   return String(registroA.Placa).localeCompare(String(registroB.Placa));
+    // }
+    return orden === 1 ? placaA > placaB : placaB > placaA;
+  });
+  guardarData();
+  return DATA;
+}
