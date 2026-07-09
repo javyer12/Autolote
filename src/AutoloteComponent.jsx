@@ -10,6 +10,10 @@ import {
   AgregarRegistro,
   OrdenarPorCodAuto,
   OrdenarPorPlaca,
+  OrdenarPorMarca,
+  OrdenarPorTipo,
+  OrdenarPorColor,
+  OrdenarPorYear,
 } from "./classes/Functions";
 import {
   SaveButton,
@@ -32,7 +36,11 @@ import TableRegisters from "./Components/Table";
 import DraggableItemApp from "./Components/DragDropInput";
 import * as XLSX from "xlsx";
 // import { mockData } from "./classes/MockData";
-import { SortModal, AscOrDesc } from "./Components/SortModal";
+import {
+  SortModal,
+  AscOrDesc,
+  // AscOrDescPriceAndYear,
+} from "./Components/SortModal";
 const tableColumns = [
   "CodAuto",
   "Placa",
@@ -72,6 +80,7 @@ export function AutoloteComponent() {
   const [isSorted, setIsSorted] = useState(false); //controla la variable de estado del modal de ordenamiento
   const [sortAtt, setSortAtt] = useState(false);
   const [sortAttribute, setSortAttribute] = useState("");
+  const [numOrStrOption, setNumOrStrOption] = useState("");
 
   //guarda los valores de la data en variables para poder mostrarlas en los inputs
   const formData = isAddingRegister
@@ -112,8 +121,8 @@ export function AutoloteComponent() {
     }
   };
 
+  //==================placa===================
   const recibirDatosPlaca = (datosHijo) => {
-    //==================placa===================
     if (datosHijo.type === "attribute") {
       setSortAttribute(datosHijo.attribute);
       setSortAtt(true);
@@ -123,6 +132,85 @@ export function AutoloteComponent() {
       const sortedData = OrdenarPorPlaca(datosHijo.direction, data);
       setData(sortedData);
       setDataForDownload({ sortedData });
+      setInfoRegister(0);
+      setNumRegister(0);
+      setSelectedIndex(sortedData.length > 0 ? 0 : null);
+      setLoadedData(true);
+      setSortAttribute("");
+    }
+  };
+
+  //==================Marca===================
+  const recibirDatosMarca = (datosHijo) => {
+    if (datosHijo.type === "attribute") {
+      setSortAttribute(datosHijo.attribute);
+      setSortAtt(true);
+      return;
+    }
+    if (datosHijo.type === "direction" && sortAttribute === "Marca") {
+      const sortedData = OrdenarPorMarca(datosHijo.direction, data);
+      setData(sortedData);
+      setDataForDownload({ sortedData });
+      setInfoRegister(0);
+      setNumRegister(0);
+      setSelectedIndex(sortedData.length > 0 ? 0 : null);
+      setLoadedData(true);
+      setSortAttribute("");
+    }
+  };
+  //==================Tipo===================
+  const recibirDatosTipo = (datosHijo) => {
+    if (datosHijo.type === "attribute") {
+      setSortAttribute(datosHijo.attribute);
+      setSortAtt(true);
+      return;
+    }
+    if (datosHijo.type === "direction" && sortAttribute === "Tipo") {
+      const sortedData = OrdenarPorTipo(datosHijo.direction, data);
+      setData(sortedData);
+      setDataForDownload({ sortedData });
+      setInfoRegister(0);
+      setNumRegister(0);
+      setSelectedIndex(sortedData.length > 0 ? 0 : null);
+      setLoadedData(true);
+      setSortAttribute("");
+    }
+  };
+  //==================Color===================
+  const recibirDatosColor = (datosHijo) => {
+    if (datosHijo.type === "attribute") {
+      setSortAttribute(datosHijo.attribute);
+      setSortAtt(true);
+      return;
+    }
+    if (datosHijo.type === "direction" && sortAttribute === "Color") {
+      const sortedData = OrdenarPorColor(datosHijo.direction, data);
+      setData(sortedData);
+      setDataForDownload({ sortedData });
+      setInfoRegister(0);
+      setNumRegister(0);
+      setSelectedIndex(sortedData.length > 0 ? 0 : null);
+      setLoadedData(true);
+      setSortAttribute("");
+    }
+  };
+  // ========================Año====================
+  const recibirDatosYear = (datosHijo) => {
+    // const value = datosHijo.value;
+    if (datosHijo.type === "attribute") {
+      setSortAttribute(datosHijo.attribute);
+      setSortAtt(true);
+      return;
+    }
+    if (datosHijo.type === "direction" && numOrStrOption === "Año") {
+      const sortedData = OrdenarPorYear(
+        datosHijo.direction,
+        data,
+        datosHijo.value,
+      );
+
+      setData(sortedData);
+      setDataForDownload({ data: sortedData });
       setInfoRegister(0);
       setNumRegister(0);
       setSelectedIndex(sortedData.length > 0 ? 0 : null);
@@ -418,20 +506,39 @@ export function AutoloteComponent() {
             <button onClick={() => setUploadFileAble()}>cancel</button>
           </div>
         )}
+
         {isLoaded && isSorted && (
           <SortModal
-            enviarDatosPlaca={recibirDatosPlaca}
             enviarDatos={recibirDatos}
+            enviarDatosPlaca={recibirDatosPlaca}
+            enviarDatosMarca={recibirDatosMarca}
+            enviarDatosTipo={recibirDatosTipo}
+            enviarDatosColor={recibirDatosColor}
+            enviarDatosPrecioYear={recibirDatosYear}
+            setNumOrStrOption={setNumOrStrOption}
             setIsSorted={setIsSorted}
           />
         )}
         {sortAtt && (
           <AscOrDesc
-            enviarDatosPlaca={recibirDatosPlaca}
             enviarDatos={recibirDatos}
+            enviarDatosPlaca={recibirDatosPlaca}
+            enviarDatosMarca={recibirDatosMarca}
+            enviarDatosTipo={recibirDatosTipo}
+            enviarDatosColor={recibirDatosColor}
+            enviarDatosPrecioYear={recibirDatosYear}
             setOpenModal={setSortAtt}
+            numOrStrOption={numOrStrOption}
           />
         )}
+        {/* {isPriceYearSorted && (
+          <AscOrDescPriceAndYear
+            // enviarDatos={recibirDatos}
+            enviarDatosPrecioYear={recibirDatosYear}
+            // setIsSorted={setIsSorted}
+            setIsPriceYearSorted={setIsPriceYearSorted}
+          />
+        )} */}
       </div>
       {/* Table component*/}
       <div className="mt-8 w-full">
@@ -460,8 +567,6 @@ export function AutoloteComponent() {
             setNumRegister(0);
             setSelectedIndex(loadedData.length > 0 ? 0 : null);
             setLoadedData(true);
-            // setData(data);
-            // setData(mockData);
           }}
           classStyles={styles}
         >

@@ -23,7 +23,7 @@ function cargarDataGuardada() {
   }
 
   const dataGuardada = localStorage.getItem(STORAGE_KEY);
-
+  // const dataGuardada = mockData;
   if (!dataGuardada) {
     return [...mockData];
   }
@@ -40,7 +40,7 @@ function guardarData() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   }
 }
-
+// cargarDataGuardada();
 //la variable data almacenara todos los datos que estan en el archivo MOCK_DATA.js, cuando se cree, elimine o modifique un item, se modificara en la variable, sin modificar el archivo MOCK_DATA.js,
 let DATA = cargarDataGuardada();
 
@@ -156,19 +156,82 @@ export function OrdenarPorCodAuto(direccion, registros = DATA) {
 
 export function OrdenarPorPlaca(direccion, registros = DATA) {
   const orden = Number(direccion);
-  // if (orden !== 1 && orden !== 2) {
-  //   return registros;
-  // }
+
   DATA = [...registros].sort((registroA, registroB) => {
-    // const placaA = Number(registroA.Placa);
-    // const placaB = Number(registroB.Placa);
-  const placaA = registroA.Placa;
-  const placaB = registroB.Placa;
-    // if (!Number.isFinite(placaA) || !Number.isFinite(placaB)) {
-    //   return String(registroA.Placa).localeCompare(String(registroB.Placa));
-    // }
+    const placaA = registroA.Placa;
+    const placaB = registroB.Placa;
+
     return orden === 1 ? placaA > placaB : placaB > placaA;
   });
   guardarData();
   return DATA;
+}
+export function OrdenarPorMarca(direccion, registros = DATA) {
+  const orden = Number(direccion);
+  // if (orden !== 1 && orden !== 2) {
+  //   return registros;
+  // }
+  DATA = [...registros].sort((registroA, registroB) => {
+    const marcaA = registroA.Marca;
+    const marcaB = registroB.Marca;
+    // if (!Number.isFinite(placaA) || !Number.isFinite(placaB)) {
+    //   return String(registroA.Placa).localeCompare(String(registroB.Placa));
+    // }
+    return orden === 1 ? marcaA > marcaB : marcaB > marcaA;
+  });
+  guardarData();
+  return DATA;
+}
+
+export function OrdenarPorTipo(direccion, registros = DATA) {
+  const orden = Number(direccion);
+  DATA = [...registros].sort((registroA, registroB) => {
+    const tipoA = registroA.Tipo;
+    const tipoB = registroB.Tipo;
+    return orden === 1 ? tipoA > tipoB : tipoB > tipoA;
+  });
+  guardarData();
+  return DATA;
+}
+export function OrdenarPorColor(direccion, registros = DATA) {
+  const orden = Number(direccion);
+  DATA = [...registros].sort((registroA, registroB) => {
+    const colorA = registroA.Color;
+    const colorB = registroB.Color;
+    return orden === 1 ? colorA > colorB : colorB > colorA;
+  });
+  guardarData();
+  return DATA;
+}
+
+export function OrdenarPorYear(direccion, registros = DATA, value) {
+  guardarData();
+  console.log(direccion);
+  console.log(value);
+  const orden = Number(direccion);
+
+  if (orden !== 1 && orden !== 2 && orden !== 3) {
+    return registros;
+  }
+
+  let data = DATA;
+  if (orden === 1 || orden === 2) {
+
+    data = [...registros].sort((registroA, registroB) => {
+      const yearA = Number(registroA.Año);
+      const yearB = Number(registroB.Año);
+
+      if (!Number.isFinite(yearA) || !Number.isFinite(yearB)) {
+        return String(registroA.yearA).localeCompare(String(registroB.yearB));
+      }
+
+      return orden === 1 ? yearA - yearB : yearB - yearA;
+    });
+    return data;
+  }
+  
+  if (orden === 3) {
+  data = [...registros].filter(val => val > value)
+}
+  return data;
 }
