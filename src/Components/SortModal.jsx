@@ -77,49 +77,30 @@ export function AscOrDesc({
   enviarDatosTipo,
   enviarDatosColor,
   enviarDatosPrecioYear,
-  numOrStrOption,
+  enviarDatosPrecio,
 }) {
   const [sortOption, setSortOption] = useState(false);
-  const [isGreaterThan, setIsGreaterThan] = useState(false);
-  const [value, setValue] = useState(0);
-  // if (sortOption === 3 || sortOption === 4) {
-  //   setIsGreaterThen(true)
-  // }
   const handleModalInputChange = () => {
     const direction = Number(sortOption);
-    if (direction === 3 || direction === 4) {
-      setIsGreaterThan(true);
-    }
+
     if (direction !== 1 && direction !== 2 && direction !== 3) {
       alert("Seleccione 1 para ascendente o 2 para descendente.");
       return false;
     }
-    console.log(value);
     enviarDatos({ type: "direction", direction });
     enviarDatosPlaca({ type: "direction", direction });
     enviarDatosMarca({ type: "direction", direction });
     enviarDatosTipo({ type: "direction", direction });
     enviarDatosColor({ type: "direction", direction });
-    enviarDatosPrecioYear({ type: "direction", direction, value });
+    enviarDatosPrecioYear({ type: "direction", direction });
+    enviarDatosPrecio({ type: "direction", direction });
+
     return true;
   };
-  const optionMenu = (
-    <div>
-      <h1>1. Asc</h1>
-      <h1>2. Desc</h1>
-    </div>
-  );
-  const optionMenuPrice = (
-    <div>
-      <h1>1. Asc</h1>
-      <h1>2. Desc</h1>
-      <h1>3. Mayor a</h1>
-      <h1>4. Menor a</h1>
-    </div>
-  );
+
   return (
     <div className="fixed z-10 inset-0 flex items-center justify-center bg-opacity-200">
-      <div className="w-full max-w-2xl  rounded-lg p-6 border border-gray-100 bg-gray-100">
+      <div className="w-full max-w-2xl  rounded-lg p-6 border border-gray-100 bg-gray-900/60">
         <div className="mb-4 flex items-center justify-between px-4">
           <div></div>
           <button
@@ -131,55 +112,27 @@ export function AscOrDesc({
         </div>
         <div className="flex flex-col p-2 items-center justify-center ">
           <div>
-            {numOrStrOption === "Año" || numOrStrOption === "Precio"
-              ? optionMenuPrice
-              : optionMenu}
+            <h1>1. Asc</h1>
+            <h1>2. Desc</h1>
           </div>
           <input
             onChange={(e) => {
               setSortOption(e.target.value);
             }}
-            className="border border-black m-3 "
+            className=" border-black border-2 m-3 bg-white text-black"
           ></input>
 
           <button
             onClick={(e) => {
               if (handleModalInputChange(e)) {
-                console.log(sortOption);
-                // sortOption === 1 || sortOption === 2
-                //   ? setOpenModal(false)
                 setOpenModal(false);
               }
             }}
-            className="border border-gray-600 bg-gray-200 p-1 rounded"
+            className="border border-gray-600 bg-gray-200 p-1 rounded text-black"
           >
             Ordenar
           </button>
         </div>
-        {/* ==============Option 3 Modal============= */}
-        {isGreaterThan && (
-          <div className="mb-4 flex flex-col items-center justify-between px-4">
-            <input
-              onChange={(e) => {
-                setValue(e.target.value);
-              }}
-              className="border border-black m-3 "
-            ></input>
-            <span className="text-sx">Inserte el numero</span>
-
-            <button
-              onClick={(e) => {
-                if (handleModalInputChange(e)) {
-                  setOpenModal(false);
-                }
-              }}
-              className="border border-gray-600 bg-gray-200 p-1 rounded"
-            >
-              Ordenar
-            </button>
-          </div>
-        )}
-        {/* =========================== */}
       </div>
     </div>
   );
@@ -192,12 +145,12 @@ export function SortModal({
   enviarDatosTipo,
   enviarDatosColor,
   enviarDatosPrecioYear,
+  enviarDatosPrecio,
   setNumOrStrOption,
 }) {
   const [sortOption, setSortOption] = useState(false);
   const handleModalInputChange = () => {
     const attribute = sortAttributes[Number(sortOption)];
-    console.log(attribute);
     if (!attribute) {
       alert("Seleccione un número válido del 1 al 7.");
       return false;
@@ -209,12 +162,13 @@ export function SortModal({
     enviarDatosTipo({ type: "attribute", attribute });
     enviarDatosColor({ type: "attribute", attribute });
     enviarDatosPrecioYear({ type: "direction", attribute });
+    enviarDatosPrecio({ type: "direction", attribute });
     setNumOrStrOption(attribute);
     return true;
   };
   return (
-    <div className="fixed z-10 inset-0 flex items-center justify-center bg-opacity-200 ">
-      <div className="w-full max-w-2xl  rounded-lg p-6 border border-gray-100 bg-gray-100">
+    <div className="fixed z-10 inset-0 flex items-center justify-center bg-opacity-100 text-white">
+      <div className="w-full max-w-2xl  rounded-lg p-6 border border-gray-100 bg-gray-900/60 ">
         <div className="mb-4 flex items-center justify-between px-4">
           <div></div>
           <button
@@ -241,7 +195,7 @@ export function SortModal({
             onChange={(e) => {
               setSortOption(e.target.value);
             }}
-            className="border border-black m-3 "
+            className=" border-black border-2 m-3 bg-white text-black"
           ></input>
           <button
             onClick={(e) => {
@@ -250,7 +204,7 @@ export function SortModal({
               }
               // setAscOrDesc(true);
             }}
-            className="border border-gray-600 bg-gray-200 p-1 rounded"
+            className="border border-gray-600 bg-gray-200 p-1 rounded text-black"
           >
             Ordenar
           </button>

@@ -14,6 +14,9 @@ import {
   OrdenarPorTipo,
   OrdenarPorColor,
   OrdenarPorYear,
+  OrdenarPorPrecio,
+  // ==============
+  FiltrarAttribute,
 } from "./classes/Functions";
 import {
   SaveButton,
@@ -30,7 +33,7 @@ import {
   SortRegisterButton,
   FilterRegisterButton,
 } from "./classes/Buttons";
-import Pagination from "./classes/Pagination";
+// import Pagination from "./classes/Pagination";
 import { useState } from "react";
 import TableRegisters from "./Components/Table";
 import DraggableItemApp from "./Components/DragDropInput";
@@ -41,6 +44,8 @@ import {
   AscOrDesc,
   // AscOrDescPriceAndYear,
 } from "./Components/SortModal";
+import { FilterModal, AscOrDescFilter } from "./Components/FilterModal";
+
 const tableColumns = [
   "CodAuto",
   "Placa",
@@ -82,6 +87,9 @@ export function AutoloteComponent() {
   const [sortAttribute, setSortAttribute] = useState("");
   const [numOrStrOption, setNumOrStrOption] = useState("");
 
+  const [filteredAttribute, setFilteredAttribute] = useState("false"); //controla la variable de estado del modal de filtrado
+  const [isFiltering, setIsFiltering] = useState("");
+  const [filterAtt, setFilterAtt] = useState();
   //guarda los valores de la data en variables para poder mostrarlas en los inputs
   const formData = isAddingRegister
     ? newRegister
@@ -203,11 +211,7 @@ export function AutoloteComponent() {
       return;
     }
     if (datosHijo.type === "direction" && numOrStrOption === "Año") {
-      const sortedData = OrdenarPorYear(
-        datosHijo.direction,
-        data,
-        datosHijo.value,
-      );
+      const sortedData = OrdenarPorYear(datosHijo.direction, data);
 
       setData(sortedData);
       setDataForDownload({ data: sortedData });
@@ -218,6 +222,96 @@ export function AutoloteComponent() {
       setSortAttribute("");
     }
   };
+  // ========================Precio====================
+  const recibirDatosPrecio = (datosHijo) => {
+    // const value = datosHijo.value;
+    if (datosHijo.type === "attribute") {
+      setSortAttribute(datosHijo.attribute);
+      setSortAtt(true);
+      return;
+    }
+    if (datosHijo.type === "direction" && numOrStrOption === "Precio") {
+      const sortedData = OrdenarPorPrecio(datosHijo.direction, data);
+
+      setData(sortedData);
+      setDataForDownload({ data: sortedData });
+      setInfoRegister(0);
+      setNumRegister(0);
+      setSelectedIndex(sortedData.length > 0 ? 0 : null);
+      setLoadedData(true);
+      setSortAttribute("");
+    }
+  };
+
+  // =========================Filtrado==========================
+  // =========================CodAuto==========================
+  const recibirDatosFiltrados = (datosHijo) => {
+    let sortedData;
+
+    if (datosHijo.type === "attribute") {
+      setFilteredAttribute(datosHijo.attribute);
+      setFilterAtt(true);
+      return;
+    }
+
+    if (datosHijo.type === "direction" && filteredAttribute === "CodAuto") {
+      sortedData = FiltrarAttribute(
+        datosHijo.direction,
+        filteredAttribute,
+        data,
+      );
+    }
+    if (datosHijo.type === "direction" && filteredAttribute === "Placa") {
+      sortedData = FiltrarAttribute(
+        datosHijo.direction,
+        filteredAttribute,
+        data,
+      );
+    }
+    if (datosHijo.type === "direction" && filteredAttribute === "Marca") {
+      sortedData = FiltrarAttribute(
+        datosHijo.direction,
+        filteredAttribute,
+        data,
+      );
+    }
+    if (datosHijo.type === "direction" && filteredAttribute === "Tipo") {
+      sortedData = FiltrarAttribute(
+        datosHijo.direction,
+        filteredAttribute,
+        data,
+      );
+    }
+    if (datosHijo.type === "direction" && filteredAttribute === "Color") {
+      sortedData = FiltrarAttribute(
+        datosHijo.direction,
+        filteredAttribute,
+        data,
+      );
+    }
+    if (datosHijo.type === "direction" && filteredAttribute === "Año") {
+      sortedData = FiltrarAttribute(
+        datosHijo.direction,
+        filteredAttribute,
+        data,
+      );
+    }
+    if (datosHijo.type === "direction" && filteredAttribute === "Precio") {
+      sortedData = FiltrarAttribute(
+        datosHijo.direction,
+        filteredAttribute,
+        data,
+      );
+    }
+    setData(sortedData);
+    setDataForDownload({ data: sortedData });
+    setInfoRegister(0);
+    setNumRegister(0);
+    setSelectedIndex(sortedData.length > 0 ? 0 : null);
+    setLoadedData(true);
+    setFilteredAttribute("");
+  };
+
   // ========================Inputs=============================
   //funcion que controla los valores de los inputs
   const handleInputChange = (e) => {
@@ -296,7 +390,6 @@ export function AutoloteComponent() {
   const handleFormSubmit = (e) => {
     e?.preventDefault();
     alert("Para guardar el registro, presione el boton Actualizar");
-    console.log(formData);
   };
 
   //funcion para borrar registros
@@ -392,9 +485,9 @@ export function AutoloteComponent() {
         setLoadedData(true);
         setUploadFileAble(false);
       } catch (error) {
-        console.error(error);
         alert(
-          "No se pudo leer el archivo. Verifique que sea un archivo XLSX o XLS válido.",
+          "No se pudo leer el archivo. Verifique que sea un archivo XLSX o XLS válido." +
+            error,
         );
       } finally {
         event.target.value = "";
@@ -410,7 +503,7 @@ export function AutoloteComponent() {
   };
 
   return (
-    <div className="m-2 w-full">
+    <div className="m-2 w-full p-4">
       {/* Inputs component*/}
       <div className="flex flex-row gap-4 w-full p-6  rounded-lg shadow">
         <form
@@ -515,6 +608,7 @@ export function AutoloteComponent() {
             enviarDatosTipo={recibirDatosTipo}
             enviarDatosColor={recibirDatosColor}
             enviarDatosPrecioYear={recibirDatosYear}
+            enviarDatosPrecio={recibirDatosPrecio}
             setNumOrStrOption={setNumOrStrOption}
             setIsSorted={setIsSorted}
           />
@@ -527,34 +621,43 @@ export function AutoloteComponent() {
             enviarDatosTipo={recibirDatosTipo}
             enviarDatosColor={recibirDatosColor}
             enviarDatosPrecioYear={recibirDatosYear}
+            enviarDatosPrecio={recibirDatosPrecio}
             setOpenModal={setSortAtt}
             numOrStrOption={numOrStrOption}
           />
         )}
-        {/* {isPriceYearSorted && (
-          <AscOrDescPriceAndYear
-            // enviarDatos={recibirDatos}
-            enviarDatosPrecioYear={recibirDatosYear}
-            // setIsSorted={setIsSorted}
-            setIsPriceYearSorted={setIsPriceYearSorted}
+        {isLoaded && isFiltering && (
+          <FilterModal
+            setOpenModal={setIsFiltering}
+            enviarDatos={recibirDatosFiltrados}
           />
-        )} */}
+        )}
+        {filterAtt && (
+          <AscOrDescFilter
+            enviarDatos={recibirDatosFiltrados}
+            setOpenModal={setFilterAtt}
+          />
+        )}
       </div>
       {/* Table component*/}
-      <div className="mt-8 w-full">
-        <TableRegisters
-          formData={formData}
-          isLoaded={isLoaded}
-          data={data}
-          info={infoRegister}
-          numRegister={numRegister}
-          onSelectRegister={(index) => selectRegister(index, 2)}
-        />
+      <div className="mt-8 w-full  bg-red/40 backdrop-blur-md border border-white/30 shadow-2xl rounded-2xl p-8 ">
+        {isLoaded ? (
+          <TableRegisters
+            formData={formData}
+            isLoaded={isLoaded}
+            data={data}
+            info={infoRegister}
+            numRegister={numRegister}
+            onSelectRegister={(index) => selectRegister(index, 2)}
+          />
+        ) : (
+          <h2 className="text-center ">NO DATA</h2>
+        )}
       </div>
       {/* Pagination Content */}
-      <div>
+      {/* <div>
         <Pagination />
-      </div>
+      </div> */}
       {/* Buttons component*/}
       <div>
         <LoadRegisterButton
@@ -682,7 +785,13 @@ export function AutoloteComponent() {
           Ordenar
         </SortRegisterButton>
         <FilterRegisterButton
-          onClick={() => console.log("filter register")}
+          onClick={() => {
+            if (isLoaded) {
+              setIsFiltering(true);
+            } else {
+              alert("No hay data cargada!.");
+            }
+          }}
           classStyles={styles}
         >
           Filtrar

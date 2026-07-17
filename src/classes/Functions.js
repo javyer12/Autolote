@@ -204,19 +204,15 @@ export function OrdenarPorColor(direccion, registros = DATA) {
   return DATA;
 }
 
-export function OrdenarPorYear(direccion, registros = DATA, value) {
-  guardarData();
-  console.log(direccion);
-  console.log(value);
+export function OrdenarPorYear(direccion, registros = DATA) {
   const orden = Number(direccion);
 
-  if (orden !== 1 && orden !== 2 && orden !== 3) {
+  if (orden !== 1 && orden !== 2) {
     return registros;
   }
 
   let data = DATA;
   if (orden === 1 || orden === 2) {
-
     data = [...registros].sort((registroA, registroB) => {
       const yearA = Number(registroA.Año);
       const yearB = Number(registroB.Año);
@@ -229,9 +225,147 @@ export function OrdenarPorYear(direccion, registros = DATA, value) {
     });
     return data;
   }
-  
-  if (orden === 3) {
-  data = [...registros].filter(val => val > value)
-}
+
   return data;
+}
+
+export function OrdenarPorPrecio(direccion, registros = DATA) {
+  const orden = Number(direccion);
+
+  if (orden !== 1 && orden !== 2) {
+    return registros;
+  }
+
+  DATA = [...registros].sort((registroA, registroB) => {
+    const precioA = Number(registroA.Precio);
+    const precioB = Number(registroB.Precio);
+
+    if (!Number.isFinite(precioA) || !Number.isFinite(precioB)) {
+      return String(registroA.precioA).localeCompare(String(registroB.precioB));
+    }
+
+    return orden === 1 ? precioA - precioB : precioB - precioA;
+  });
+
+  return DATA;
+}
+
+// filtrado
+export function FiltrarAttribute(
+  direccion,
+  filteredAttribute,
+  registros = DATA,
+) {
+  // ===================Placa====================
+  if (filteredAttribute === "CodAuto") {
+    const orden = Number(direccion);
+
+    let registerFiltered = DATA.filter(
+      (car) => car.CodAuto.toLowerCase() === orden.toLowerCase(),
+    );
+    if (registerFiltered === undefined) {
+      registros;
+    }
+    return registerFiltered;
+  }
+  // ===================Placa====================
+  if (filteredAttribute === "Placa") {
+    const orden = direccion;
+
+    let registerFiltered = DATA.filter((car) => car.Placa === orden);
+    if (registerFiltered === undefined) {
+      registros;
+    }
+    return registerFiltered;
+  }
+  // ===================Marca====================
+  if (filteredAttribute === "Marca") {
+    const orden = direccion;
+
+    let registerFiltered = DATA.filter(
+      (car) => car.Marca.toLowerCase() === orden.toLowerCase(),
+    );
+
+    if (registerFiltered === undefined) {
+      registros;
+    }
+    return registerFiltered;
+  }
+  // ===================Tipo====================
+  if (filteredAttribute === "Tipo") {
+    const orden = direccion;
+
+    let registerFiltered = DATA.filter(
+      (car) => car.Tipo.toLowerCase() === orden.toLowerCase(),
+    );
+
+    if (registerFiltered === undefined) {
+      registros;
+    }
+    return registerFiltered;
+  }
+  // ===================Color====================
+  if (filteredAttribute === "Color") {
+    const orden = direccion;
+
+    let registerFiltered = DATA.filter(
+      (car) => car.Color.toLowerCase() === orden.toLowerCase(),
+    );
+
+    if (registerFiltered === undefined) {
+      registros;
+    }
+    return registerFiltered;
+  }
+  // ===================Año====================
+  if (filteredAttribute === "Año") {
+    let registerFiltered;
+    const orden = Number(direccion);
+    let filteredGL = confirm("Filtrar solo los del Año:" + orden + " ?");
+
+    if (filteredGL) {
+      registerFiltered = DATA.filter((car) => car.Año === orden);
+    } else {
+      //si filteredGL es falso, entonces preguntara si desea mayor o menor al dato introducido
+      let filtered = confirm("Click Ok: Mayores a, Click Cancel: Menores a.");
+      //filtra por registro mayores al dato
+      if (filtered) {
+        registerFiltered = DATA.filter((car) => car.Año >= orden);
+      }
+      //filtra por registro menores al dato
+      if (!filtered) {
+        registerFiltered = DATA.filter((car) => car.Año <= orden);
+      }
+    }
+    if (registerFiltered === undefined) {
+      registros;
+    }
+    return registerFiltered;
+  }
+  // ===================Precio====================
+  if (filteredAttribute === "Precio") {
+    let registerFiltered;
+    const orden = Number(direccion);
+    let filteredGL = confirm("Filtrar solo los de Precio:" + orden + " ?");
+
+    if (filteredGL) {
+      registerFiltered = DATA.filter((car) => car.Precio === orden);
+    } else {
+      //si filteredGL es falso, entonces preguntara si desea mayor o menor al dato introducido
+      let filtered = confirm("Click Ok: Mayores a, Click Cancel: Menores a.");
+      //filtra por registro mayores al dato
+      if (filtered) {
+        registerFiltered = DATA.filter((car) => car.Precio >= orden);
+      }
+      //filtra por registro menores al dato
+      if (!filtered) {
+        registerFiltered = DATA.filter((car) => car.Precio <= orden);
+      }
+    }
+    if (registerFiltered === undefined) {
+      registros;
+    }
+    return registerFiltered;
+  }
+  return true;
 }

@@ -19,7 +19,7 @@ function AppContent() {
 
   return (
     <section id="center" style={sectionStyle}>
-      <div className="flex items-center justify-center gap-4 m-3">
+      <div className="flex items-center justify-center gap-4 m-3 ">
         <h2 className="text-center text-2xl font-semibold">
           Welcome to My Vite App
         </h2>

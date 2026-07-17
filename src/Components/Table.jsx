@@ -2,7 +2,7 @@ const columns = ["CodAuto", "Placa", "Marca", "Tipo", "Color", "Año", "Precio"]
 
 function RegisterTable({ rows, startIndex = 0, onSelectRegister }) {
   return (
-    <table className="h-full  bg-gray-50 rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-100 border border-gray-100 table-auto border-collapse  w-full">
+    <table className="h-full  bg-gray-900/20 rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-100 border border-gray-100 table-auto border-collapse  w-full">
       <thead className="bg-gray-700 text-white">
         <tr>
           {columns.map((column) => (
@@ -56,6 +56,7 @@ export default function TableRegisters({
 
   return (
     <RegisterTable
+      className="bg-slate-900/40"
       rows={[currentItem]}
       startIndex={tableIndex}
       onSelectRegister={onSelectRegister}
